@@ -150,8 +150,8 @@ class DshboardBalanceViewSet(viewsets.ViewSet):
     def get_balance(user):
         balances = {}
         balances['USDT'] = get_usdt_balance(user=user)
-        balances['USD'] = 0#get_usd_balance(user=user)
-        balances['EURO'] = 0#get_euro_balance(user=user)
+        balances['USD'] = 0 #get_usd_balance(user=user)
+        balances['EURO'] = 0 #get_euro_balance(user=user)
         return balances
  
     def list(self, request, *args, **kwargs):
@@ -160,6 +160,120 @@ class DshboardBalanceViewSet(viewsets.ViewSet):
         return Response(balance, status=status.HTTP_200_OK)
     
     
+
+# class TransferViewSet(viewsets.ViewSet):
+#     permission_classes = (IsAuthenticated,)
+
+#     @swagger_auto_schema(request_body=TransferSerializer ,responses={200: ""})
+#     def create(self, request, *args, **kwargs):
+#         user = self.request.user
+#         data = request.data
+#         serializer = TransferSerializer(data=data, context={'request': request})
+#         serializer.is_valid(raise_exception=True)
+#         serialized_data = serializer.data
+#         amount = serialized_data['amount']
+#         destination_account_owner=serialized_data['destination_account_owner'],
+#         behalf=serialized_data['behalf'],
+#         description=serialized_data['description']
+#         try:
+#             match serialized_data['currency']:
+#                 case 'USDT':
+#                     tron_client = TronClient()
+#                     wallet = get_object_or_404(Wallets, user=user)
+#                     private_key = wallet.private_key
+#                     from_address = wallet.address
+#                     if serialized_data.get('destination_account_id'):
+#                         to_wallet = get_object_or_404(Wallets, user__id=serialized_data['destination_wallet_id'])
+#                         to_address = to_wallet.address
+#                     else:
+#                         to_address = serialized_data['destination_wallet_id']
+#                     payload = tron_client.transfer_tether(from_address=from_address, to_address=to_address, private_key=private_key, amount=D(amount))
+#                     # transfer wage
+#                     if payload.get('receipt'):
+#                         result = payload['receipt'].get('result')
+#                         if result:
+#                             if result == 'FAILED':
+#                                 status_transfer = StatusChoices.FAILED
+#                                 withdrawal_obj = Withdrawal.objects.create(
+#                                     user=user,
+#                                     address=to_address,
+#                                     currency=serialized_data['currency'],
+#                                     amount=amount,
+#                                     destination_account_owner=destination_account_owner,
+#                                     behalf=behalf,
+#                                     description=description,
+#                                     tx_id=payload['id'],
+#                                     status = status_transfer
+#                                 )
+#                             elif result == 'SUCCESS':
+#                                 status_transfer = StatusChoices.COMPLETED
+#                                 wage = Wage.objects.last()
+#                                 transfer_wage = wage.transfer_wage
+#                                 block_amount = D(amount) * (transfer_wage / D('100'))
+#                                 with transaction.atomic():
+#                                     withdrawal_obj = Withdrawal.objects.create(
+#                                         user=user,
+#                                         address=to_address,
+#                                         currency=serialized_data['currency'],
+#                                         amount=amount,
+#                                         destination_account_owner=destination_account_owner,
+#                                         behalf=behalf,
+#                                         description=description,
+#                                         tx_id=payload['id'],
+#                                         status = status_transfer
+#                                     )    
+#                                     BlockFee.objects.create(
+#                                         user=user,
+#                                         reason=withdrawal_obj,
+#                                         currency='USDT',
+#                                         amount=block_amount,
+#                                         status=StatusChoices.TO_ACT
+#                                     )
+#                             else:
+#                                 wage = Wage.objects.last()
+#                                 transfer_wage = wage.transfer_wage
+#                                 block_amount = D(amount) * (transfer_wage / D('100'))
+#                                 with transaction.atomic():
+#                                     withdrawal_obj = Withdrawal.objects.create(
+#                                         user=user,
+#                                         address=to_address,
+#                                         currency=serialized_data['currency'],
+#                                         amount=amount,
+#                                         destination_account_owner=destination_account_owner,
+#                                         behalf=behalf,
+#                                         description=description,
+#                                         tx_id=payload['id'],
+#                                     )    
+#                                     BlockFee.objects.create(
+#                                         user=user,
+#                                         reason=withdrawal_obj,
+#                                         currency='USDT',
+#                                         amount=block_amount
+#                                     )
+#                         tx_id = payload['id']
+#                 case _:
+#                     if serialized_data['destination_account_id']:
+#                         to_user = get_object_or_404(UserModel, user__id=serialized_data['destination_account_id'])
+#                         internal_transfer = InternalTransfers.objects.create(
+#                             from_user=user,
+#                             to_user=to_user,
+#                             currency=serialized_data['currency'],
+#                             amount=amount,
+#                             destination_account_owner=destination_account_owner,
+#                             behalf=behalf,
+#                             description=description
+#                         )
+#                         tx_id = internal_transfer.id
+                        
+#                     else:
+#                         paypal_client = PayPalClient()
+#                         paypal_client.transfer()
+#                         tx_id = 0
+#         except Exception as e:
+#             print(e)
+#             raise ValidationError(e)
+#         return Response("Your request is created", status=status.HTTP_200_OK)
+
 
 class TransferViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
@@ -178,99 +292,36 @@ class TransferViewSet(viewsets.ViewSet):
         try:
             match serialized_data['currency']:
                 case 'USDT':
-                    tron_client = TronClient()
-                    wallet = get_object_or_404(Wallets, user=user)
-                    private_key = wallet.private_key
-                    from_address = wallet.address
                     if serialized_data.get('destination_account_id'):
                         to_wallet = get_object_or_404(Wallets, user__id=serialized_data['destination_wallet_id'])
                         to_address = to_wallet.address
                     else:
                         to_address = serialized_data['destination_wallet_id']
-                    payload = tron_client.transfer_tether(from_address=from_address, to_address=to_address, private_key=private_key, amount=D(amount))
-                    # transfer wage
-                    if payload.get('receipt'):
-                        result = payload['receipt'].get('result')
-                        if result:
-                            if result == 'FAILED':
-                                status_transfer = StatusChoices.FAILED
-                                withdrawal_obj = Withdrawal.objects.create(
-                                    user=user,
-                                    address=to_address,
-                                    currency=serialized_data['currency'],
-                                    amount=amount,
-                                    destination_account_owner=destination_account_owner,
-                                    behalf=behalf,
-                                    description=description,
-                                    tx_id=payload['id'],
-                                    status = status_transfer
-                                )
-                            elif result == 'SUCCESS':
-                                status_transfer = StatusChoices.COMPLETED
-                                wage = Wage.objects.last()
-                                transfer_wage = wage.transfer_wage
-                                block_amount = D(amount) * (transfer_wage / D('100'))
-                                with transaction.atomic():
-                                    withdrawal_obj = Withdrawal.objects.create(
-                                        user=user,
-                                        address=to_address,
-                                        currency=serialized_data['currency'],
-                                        amount=amount,
-                                        destination_account_owner=destination_account_owner,
-                                        behalf=behalf,
-                                        description=description,
-                                        tx_id=payload['id'],
-                                        status = status_transfer
-                                    )    
-                                    BlockFee.objects.create(
-                                        user=user,
-                                        reason=withdrawal_obj,
-                                        currency='USDT',
-                                        amount=block_amount,
-                                        status=StatusChoices.TO_ACT
-                                    )
-                            else:
-                                wage = Wage.objects.last()
-                                transfer_wage = wage.transfer_wage
-                                block_amount = D(amount) * (transfer_wage / D('100'))
-                                with transaction.atomic():
-                                    withdrawal_obj = Withdrawal.objects.create(
-                                        user=user,
-                                        address=to_address,
-                                        currency=serialized_data['currency'],
-                                        amount=amount,
-                                        destination_account_owner=destination_account_owner,
-                                        behalf=behalf,
-                                        description=description,
-                                        tx_id=payload['id'],
-                                    )    
-                                    BlockFee.objects.create(
-                                        user=user,
-                                        reason=withdrawal_obj,
-                                        currency='USDT',
-                                        amount=block_amount
-                                    )
-                        tx_id = payload['id']
+                        status_transfer = StatusChoices.PENDING
+                        wage = Wage.objects.last()
+                        transfer_wage = wage.transfer_wage
+                        block_amount = D(amount) * (transfer_wage / D('100'))
+                        with transaction.atomic():
+                            withdrawal_obj = Withdrawal.objects.create(
+                                user=user,
+                                address=to_address,
+                                currency=serialized_data['currency'],
+                                amount=amount,
+                                destination_account_owner=destination_account_owner,
+                                behalf=behalf,
+                                description=description,
+                                status = status_transfer
+                            )    
+                            BlockFee.objects.create(
+                                user=user,
+                                reason=withdrawal_obj,
+                                currency='USDT',
+                                amount=block_amount,
+                                status=StatusChoices.TO_ACT
+                            )
                 case _:
-                    if serialized_data['destination_account_id']:
-                        to_user = get_object_or_404(UserModel, user__id=serialized_data['destination_account_id'])
-                        internal_transfer = InternalTransfers.objects.create(
-                            from_user=user,
-                            to_user=to_user,
-                            currency=serialized_data['currency'],
-                            amount=amount,
-                            destination_account_owner=destination_account_owner,
-                            behalf=behalf,
-                            description=description
-                        )
-                        tx_id = internal_transfer.id
-                        
-                    else:
-                        paypal_client = PayPalClient()
-                        paypal_client.transfer()
-                        tx_id = 0
+                    ...
         except Exception as e:
-            print(e)
             raise ValidationError(e)
         return Response("Your request is created", status=status.HTTP_200_OK)
     

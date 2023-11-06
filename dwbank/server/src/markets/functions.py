@@ -362,9 +362,10 @@ def get_usdt_balance(user):
     address = wallet.address
     tron_client = TronClient()
     tether_balance  = tron_client.get_balance(address=address)
+    withdrawals = Withdrawal.objects.filter(user=user, status=StatusChoices.PENDING, currency='USDT').aggregate(Sum("amount"))['amount__sum'] or 0
     creditcards = CreditCard.objects.filter(Q(user=user) & ~Q(state=StateChoices.Not_Accepted) & Q(currency='USDT')).aggregate(Sum("amount"))['amount__sum'] or D('0')
     block_balance = BlockFee.objects.filter(user=user, status__in=[StatusChoices.PENDING, StatusChoices.TO_ACT], currency='USDT').aggregate(Sum("amount"))['amount__sum'] or D('0')
-    balance = D(str(tether_balance)) - creditcards - block_balance
+    balance = D(str(tether_balance)) - creditcards - block_balance - withdrawals
     return balance
 
 def get_usd_balance(user):
