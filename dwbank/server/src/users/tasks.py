@@ -10,7 +10,7 @@ from email.mime.image import MIMEImage
 # logger = get_task_logger(__name__)
 
 
-# @shared_task(name='sendemail')
+@shared_task(name='send_email')
 def send_email(title, receivers, template="base", context=None):
 #     # if context:
 #     #     context['time']= PersianCalender(now()).to_datetime()

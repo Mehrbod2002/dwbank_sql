@@ -94,14 +94,14 @@ class UserModel(AbstractUser):
         context = {"password":password, 'first_name':self.first_name, "last_name":self.last_name, 'account_id': self.id}
         print(context)
         # send_email.apply_async(args=(title, [destination_email], template_name, context))
-        send_email(title, [destination_email], template_name, context)
+        send_email.delay(title, [destination_email], template_name, context)
 
     def send_deposit_to_user(self, title, template_name , value, from_address, deposit_id):
         destination_email = self.email
         context = {"value":value, 'from_address':from_address,'first_name':self.first_name, "last_name":self.last_name, 'account_id': self.id}
         print(context)
         # send_email.apply_async(args=(title, [destination_email], template_name, context))
-        send_email(title, [destination_email], template_name, context)
+        send_email.delay(title, [destination_email], template_name, context)
         DepositHistory.objects.filter(id=deposit_id).update(email_is_sent=True)
 
     
@@ -118,7 +118,7 @@ class UserModel(AbstractUser):
         if Notification.objects.filter(user=self).exists():
             notif = Notification.objects.filter(user=self).last()
             if notif.deposit_and_withdraw:
-                send_email(title, [destination_email], template_name, context)
+                send_email.delay(title, [destination_email], template_name, context)
 
     def change_password(self, new_password):
         self.set_password(new_password)

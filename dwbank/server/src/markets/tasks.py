@@ -9,8 +9,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 
 from dwbank.celery import celery_app
-from markets.models import BlockFee, Withdrawal
+from markets.models import BlockFee, Withdrawal, Wallets
 from markets.choices import StatusChoices
+from markets.functions import TronClient
+from users.models import UserModel
 
 logger = get_task_logger(__name__)
 
@@ -49,3 +51,17 @@ def check_tx_id():
                             BlockFee.objects.filter(reason_object_id=i.id).update(
                                 status=StatusChoices.FAILED
                             )
+
+@shared_task(name='create_wallet')
+def create_wallet(user_id):
+    tron = TronClient()
+    try:
+        wallet = Wallets.objects.filter(user=None).last()
+        user = get_object_or_404(UserModel, pk=user_id)
+    except Exception as e:
+        #TODO NOTIF T ADMIN
+        ...
+    wallet.user = user
+    tx_id = tron.activate_account(to_address=wallet.address)
+    wallet.tx_id_activation = result
+    wallet.save()

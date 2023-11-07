@@ -22,6 +22,7 @@ from markets.models import FiatDepositHistory, InternalTransfers, Wallets, Withd
                            CreateDeposit, CreditCard, Loan, DepositHistory, BlockFee, Wage
 from markets.choices import StatusChoices, StateChoices
 from markets.messages import Messages
+from markets.tasks import create_wallet
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum
 from django.db import transaction
@@ -82,9 +83,15 @@ class TetherDepositViewSet(viewsets.ViewSet):
 
     def list(self, request, *args, **kwargs):
         user = self.request.user
-        tron_client = TronClient()
-        deposit_address, network = tron_client.generate_address(user_id=user.id)
-        return Response({'address': deposit_address, 'network': network}, status=status.HTTP_200_OK)
+        try:
+            wallet = get_object_or_404(Wallets, user=user)
+            address = wallet.address
+            network = wallet.network
+        except:
+            address = ""
+            network = "TRC20"
+            create_wallet.apply_asyns(args=(user.id,))
+        return Response({'address': address, 'network': network}, status=status.HTTP_200_OK)
 
 
 class chargeFiatViewSet(viewsets.ViewSet):

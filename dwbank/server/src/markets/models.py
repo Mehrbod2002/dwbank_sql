@@ -27,10 +27,10 @@ class IntermediateWallet(BaseModel):
         return super().save(*args, **kwargs)
     
 class Wallets(BaseModel):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=_("user"), on_delete=models.CASCADE, null=True, blank=True, editable=False)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=_("user"), on_delete=models.CASCADE, null=True, blank=True)
     address = models.CharField(_("address"), max_length=500,unique=True)
     network = models.CharField(_("Network"), max_length=500, default="TRC20")
-    tx_id_activation = models.CharField(_("tx_id_activation"), max_length=500, null=True, blank=True, editable=False)
+    tx_id_activation = models.CharField(_("tx_id_activation"), max_length=500, null=True, blank=True)
 
     def __str__(self) -> str:
         return self.address

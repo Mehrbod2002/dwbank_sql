@@ -2,6 +2,7 @@ import uuid
 from users.messages import Messages
 from users.models import UserModel, Notification, Sign
 from markets.functions import TronClient
+from markets.tasks import create_wallet
 
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
@@ -27,7 +28,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         obj.set_password(raw_password=password)
         obj.save()
         obj.send_credential_to_user(password=password, title='DWBANK PASSWORD', template_name='password')
-        tron_client.generate_address(user_id=obj.id)
+        create_wallet.apply_async(args=(obj.id,))
         return obj
 
 
