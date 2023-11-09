@@ -10,7 +10,7 @@ from decimal import Decimal as D
 from tronpy import Tron
 from tronpy.keys import PrivateKey
 from tronpy.providers import HTTPProvider
-import web3
+# import web3
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.db.models import Sum, Q
@@ -335,26 +335,26 @@ class PayPalClient:
         response = requests.get('https://api-m.sandbox.paypal.com/v1/payments/payouts-item/8AELMXH8UB2P8', headers=headers)
 
 
-class ERC20:
+# class ERC20:
 
-    def __init__(self):
-        INFURA_URL = settings.INFURA_URL
-        INFURA_KEY = settings.INFURA_KEY
-        self.web3 = Web3(Web3.HTTPProvider(INFURA_URL + INFURA_KEY))
+#     def __init__(self):
+#         INFURA_URL = settings.INFURA_URL
+#         INFURA_KEY = settings.INFURA_KEY
+#         self.web3 = Web3(Web3.HTTPProvider(INFURA_URL + INFURA_KEY))
 
-    def generate_address(self):
-        key = '0xc3182acb87100727e505dce15b132a8e95cdb1d70a92548fbf57d0724bcc46e4'
-        w = web3.Account.create()
-        print(w.key)
-        w = self.web3.eth.account.privateKeyToAccount(key)
-        w.address
-        return w.address
+#     def generate_address(self):
+#         key = '0xc3182acb87100727e505dce15b132a8e95cdb1d70a92548fbf57d0724bcc46e4'
+#         w = web3.Account.create()
+#         print(w.key)
+#         w = self.web3.eth.account.privateKeyToAccount(key)
+#         w.address
+#         return w.address
 
-    def get_balance():
-        ...
+#     def get_balance():
+#         ...
     
-    def transfer():
-        ...
+#     def transfer():
+#         ...
 
 
 def get_usdt_balance(user):

@@ -9,25 +9,31 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-import os
+
 from pathlib import Path
-from .variables import *
+from dotenv import load_dotenv
 from datetime import timedelta
+import os
+from .variables import *
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w)^72m0b0vizxoc2lz)+y3fmy^1tkg88t5n@=7kx=s%1ykurld'
+
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True #bool(int(os.environ.get("DEBUG", "1")))
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['*'] #os.environ.get("ALLOWED_HOSTS").split(",")
+       
+# Application definition
 
 
 # Application definition
@@ -89,6 +95,17 @@ WSGI_APPLICATION = 'dwbank.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+#         "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
+#         "USER": os.environ.get("SQL_USER", "user"),
+#         "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+#         "HOST": os.environ.get("SQL_HOST", "localhost")
+#     }
+# }
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -130,7 +147,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'
 
 USE_I18N = True
 
@@ -140,7 +157,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "staticfiles"]  
+STATIC_ROOT=os.path.join(BASE_DIR,'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -166,14 +185,12 @@ REST_FRAMEWORK = {
 
 # EMAIL_BACKEND
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'dwbank23@gmail.com'
-EMAIL_HOST_PASSWORD = "hmlaqnjppocrfats"
+EMAIL_HOST = 'mail.dwbank.org'
+EMAIL_HOST_USER = "noreply@dwbank.org"
+DEFAULT_FROM_EMAIL = 'DwBank noreply@dwbank.org'
+EMAIL_HOST_PASSWORD = "DW@Bank@905122"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
-
-CSRF_TRUSTED_ORIGINS=['https://dl.eramglobal.com']
 
 
 SIMPLE_JWT = {
@@ -213,5 +230,5 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Asia/Tehran"
 
-
-
+CSRF_TRUSTED_ORIGINS=['https://dl.eramglobal.com']
+# CSRF_TRUSTED_ORIGINS=['http://127.0.0.1:8000']

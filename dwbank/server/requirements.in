@@ -1,0 +1,17 @@
+celery
+django
+django-cors-headers
+django-filter
+django-redis
+djangorestframework
+gunicorn
+psycopg2-binary
+requests
+Pillow
+djangorestframework-simplejwt
+drf-yasg
+mongoengine
+python-dotenv
+django-csp
+base58
+tronpy
