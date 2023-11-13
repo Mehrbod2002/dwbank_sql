@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
       context: .
     ports:
-      - 8001:8001
+      - 8091:8091
     volumes:
       - ./src:/app/src
 
@@ -44,7 +44,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - 8000:80
+      - 8090:80
     depends_on:
       - dwbank_server
 
