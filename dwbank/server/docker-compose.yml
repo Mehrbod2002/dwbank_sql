@@ -13,7 +13,7 @@ services:
       - ./src:/app/src
 
     command: >
-      sh -c "gunicorn dwbank.wsgi:application -b :8001 &
+      sh -c "gunicorn dwbank.wsgi:application -b :8091 &
             celery -A dwbank worker  -B -l info"
           
 
