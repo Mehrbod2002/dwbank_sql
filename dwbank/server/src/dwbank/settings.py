@@ -157,6 +157,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+MEDIA_URL = "/images/"
+MEDIA_ROO = os.path.join(BASE_DIR,'images')
+
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "staticfiles"]  
 STATIC_ROOT=os.path.join(BASE_DIR,'static')
