@@ -173,7 +173,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.UserModel'
 
 # CORS
-CORS_ALLOW_ALL_ORIGINS = True # If this is used then `CORS_ALLOWED_ORIGINS` will not have any effect
+CORS_ALLOWED_ORIGINS = [
+    'https://www.dwbank.org',
+    'https://api.dwbank.org',
+    'https://dwbank.org'
+]
 CORS_ALLOW_CREDENTIALS = True
 
 
