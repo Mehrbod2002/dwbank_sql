@@ -233,4 +233,4 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Asia/Tehran"
 
-CSRF_TRUSTED_ORIGINS=['https://dl.eramglobal.com']
+CSRF_TRUSTED_ORIGINS=['https://api.dwbank.org']
