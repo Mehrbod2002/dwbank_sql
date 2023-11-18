@@ -20,7 +20,7 @@ class UserAdmin(UserAdmin):
                   'email', 'password1', 'password2',
                   'phone_number', 'first_name', 'last_name',
                   'id_number', 'id_card_image', 'passport_number',
-                  'passport_image', 'address', 'birthday'
+                  'passport_image', 'address', 'birthday', 'id'
             )
             }
 
