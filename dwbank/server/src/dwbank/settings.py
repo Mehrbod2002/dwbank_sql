@@ -193,10 +193,10 @@ REST_FRAMEWORK = {
 
 # EMAIL_BACKEND
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.dwbank.org'
-EMAIL_HOST_USER = "noreply@dwbank.org"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = "dwbankofficial@gmail.com"
 DEFAULT_FROM_EMAIL = 'DwBank dwbankofficial@gmail.com'
-EMAIL_HOST_PASSWORD = "yetfvkzcwoagekig"
+EMAIL_HOST_PASSWORD = "nwwgglzowdauhtkx"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
