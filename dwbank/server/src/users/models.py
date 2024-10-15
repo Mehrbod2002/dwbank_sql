@@ -93,8 +93,8 @@ class UserModel(AbstractUser):
         destination_email = self.email
         context = {"password":password, 'first_name':self.first_name, "last_name":self.last_name, 'account_id': self.id}
         print(context)
-        # send_email.apply_async(args=(title, [destination_email], template_name, context))
-        send_email.delay(title, ["mhmdmoayeri@gmail.com"], template_name, context)
+        send_email.apply_async(args=(title, [destination_email], template_name, context))
+        #send_email.delay(title, ["mhmdmoayeri@gmail.com"], template_name, context)
 
     def send_deposit_to_user(self, title, template_name , value, from_address, deposit_id):
         destination_email = self.email
